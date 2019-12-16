@@ -1,0 +1,37 @@
+From f58d3745ab9f9c080b765c19e8acfa77603a29af Mon Sep 17 00:00:00 2001
+From: LOL <you@example.com>
+Date: Sun, 29 Apr 2018 03:53:27 -0400
+Subject: [PATCH] Disable fault around 4.4.5
+
+---
+ mm/memory.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/mm/memory.c b/mm/memory.c
+index b80bf47..dbf7c47b 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -2950,13 +2950,13 @@ static int do_read_fault(struct mm_struct *mm, struct vm_area_struct *vma,
+ 	 * if page by the offset is not ready to be mapped (cold cache or
+ 	 * something).
+ 	 */
+-	if (vma->vm_ops->map_pages && fault_around_bytes >> PAGE_SHIFT > 1) {
+-		pte = pte_offset_map_lock(mm, pmd, address, &ptl);
+-		do_fault_around(vma, address, pte, pgoff, flags);
+-		if (!pte_same(*pte, orig_pte))
+-			goto unlock_out;
+-		pte_unmap_unlock(pte, ptl);
+-	}
++//	if (vma->vm_ops->map_pages && fault_around_bytes >> PAGE_SHIFT > 1) {
++//		pte = pte_offset_map_lock(mm, pmd, address, &ptl);
++//		do_fault_around(vma, address, pte, pgoff, flags);
++//		if (!pte_same(*pte, orig_pte))
++//			goto unlock_out;
++//		pte_unmap_unlock(pte, ptl);
++//	}
+ 
+ 	ret = __do_fault(vma, address, pgoff, flags, NULL, &fault_page);
+ 	if (unlikely(ret & (VM_FAULT_ERROR | VM_FAULT_NOPAGE | VM_FAULT_RETRY)))
+-- 
+2.7.4
+

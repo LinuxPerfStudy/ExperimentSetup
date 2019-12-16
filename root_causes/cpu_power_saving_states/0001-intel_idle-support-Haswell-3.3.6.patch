@@ -1,0 +1,68 @@
+From 84b63229dddbb611ca1c29ebf67087a6e4aa76e2 Mon Sep 17 00:00:00 2001
+From: Xiang Ren <jenny@awesome.org>
+Date: Sat, 28 Apr 2018 16:39:37 -0500
+Subject: [PATCH] Patched Hashwell CPU data.
+
+---
+ drivers/idle/intel_idle.c |   38 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
+
+diff --git a/drivers/idle/intel_idle.c b/drivers/idle/intel_idle.c
+index 54ab97b..b314990 100644
+--- a/drivers/idle/intel_idle.c
++++ b/drivers/idle/intel_idle.c
+@@ -163,6 +163,38 @@ static struct cpuidle_state snb_cstates[MWAIT_MAX_NUM_CSTATES] = {
+ 		.enter = &intel_idle },
+ };
+ 
++static struct cpuidle_state hsw_cstates[MWAIT_MAX_NUM_CSTATES] = {
++	{ /* MWAIT C0 */ },
++	{ /* MWAIT C1 */
++		.name = "C1-HSW",
++		.desc = "MWAIT 0x00",
++		.flags = CPUIDLE_FLAG_TIME_VALID,
++		.exit_latency = 2,
++		.target_residency = 2,
++		.enter = &intel_idle },
++	{ /* MWAIT C2 */
++		.name = "C3-HSW",
++		.desc = "MWAIT 0x10",
++		.flags = CPUIDLE_FLAG_TIME_VALID | CPUIDLE_FLAG_TLB_FLUSHED,
++		.exit_latency = 33,
++		.target_residency = 100,
++		.enter = &intel_idle },
++	{ /* MWAIT C3 */
++		.name = "C6-HSW",
++		.desc = "MWAIT 0x20",
++		.flags = CPUIDLE_FLAG_TIME_VALID | CPUIDLE_FLAG_TLB_FLUSHED,
++		.exit_latency = 133,
++		.target_residency = 400,
++		.enter = &intel_idle },
++	{ /* MWAIT C4 */
++		.name = "C7s-HSW",
++		.desc = "MWAIT 0x32",
++		.flags = CPUIDLE_FLAG_TIME_VALID | CPUIDLE_FLAG_TLB_FLUSHED,
++		.exit_latency = 166,
++		.target_residency = 500,
++		.enter = &intel_idle },
++};
++
+ static struct cpuidle_state atom_cstates[MWAIT_MAX_NUM_CSTATES] = {
+ 	{ /* MWAIT C0 */ },
+ 	{ /* MWAIT C1 */
+@@ -384,6 +416,12 @@ static int intel_idle_probe(void)
+ 	case 0x2D:	/* SNB Xeon */
+ 		cpuidle_state_table = snb_cstates;
+ 		break;
++	case 0x3C:
++	case 0x3F:
++	case 0x45:
++		cpuidle_state_table = hsw_cstates;
++		break;
++		
+ 
+ 	default:
+ 		pr_debug(PREFIX "does not run on family %d model %d\n",
+-- 
+1.7.9.5
+

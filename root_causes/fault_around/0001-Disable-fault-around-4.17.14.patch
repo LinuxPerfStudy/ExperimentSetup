@@ -1,0 +1,33 @@
+From 0157dbffc1ea1583277154bece9d255a38f1bf09 Mon Sep 17 00:00:00 2001
+From: renxian2 <renxian2@baker4.dsrg.utoronto.ca>
+Date: Thu, 18 Apr 2019 23:48:24 -0500
+Subject: [PATCH] Disable fault around 4.17.14
+
+---
+ mm/memory.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/mm/memory.c b/mm/memory.c
+index 01f5464e0fd2..bb40484b2130 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -3623,11 +3623,11 @@ static int do_read_fault(struct vm_fault *vmf)
+ 	 * if page by the offset is not ready to be mapped (cold cache or
+ 	 * something).
+ 	 */
+-	if (vma->vm_ops->map_pages && fault_around_bytes >> PAGE_SHIFT > 1) {
+-		ret = do_fault_around(vmf);
+-		if (ret)
+-			return ret;
+-	}
++//	if (vma->vm_ops->map_pages && fault_around_bytes >> PAGE_SHIFT > 1) {
++//		ret = do_fault_around(vmf);
++//		if (ret)
++//			return ret;
++//	}
+ 
+ 	ret = __do_fault(vmf);
+ 	if (unlikely(ret & (VM_FAULT_ERROR | VM_FAULT_NOPAGE | VM_FAULT_RETRY)))
+-- 
+2.17.1
+
